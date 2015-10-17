@@ -1,5 +1,5 @@
 # unidev-utils
-UniDev utils scripts
+UniDev utils
 
 Random utility scripts 
 Usually we do stuff in groovy/gradle/bash
