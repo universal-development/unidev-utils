@@ -18,3 +18,26 @@
  * Script for converting files from directory into collection of json files
  */
 
+import groovy.io.FileType
+import groovy.json.*
+
+class Item {
+    String _id;
+    String content;
+}
+
+int id = 1;
+
+def input = new File("input")
+def output = new File("output")
+
+input.eachFileRecurse (FileType.FILES) { file ->
+    println "Processing file " + file.getName() + " as " + id;
+    def item = new Item(
+            _id : file.name.replaceFirst(~/\.[^\.]+$/, ''),
+            content: file.text
+    );
+    def jsonContent = new JsonBuilder(item).toPrettyString();
+    new File(output, id + ".json").write(jsonContent);
+    id++;
+}
