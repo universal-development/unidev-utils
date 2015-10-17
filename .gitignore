@@ -1,12 +1,29 @@
-*.class
+# Please keep in mind:
+# - If you need to ignore files on your local machine only, please use .git/info/exclude instead .gitignore
+# - Project specified ignore rules must be located in project directory only
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+# Eclipse project files
+.settings
+.classpath
+.project
+.metadata
+.mymetadata
+.springBeans
+.externalToolBuilders
+.gradle
 
-# Package Files #
-*.jar
-*.war
-*.ear
+# IntelliJ Idea project files
+.idea
+.idea/*
+*.iml
+*.ipr
+*.iws
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+# Always ignore these directories/files
+target
+build
+*/target/*
+logs
+bin
+root/xms/artifacts
+test-output
