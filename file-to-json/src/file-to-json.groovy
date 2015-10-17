@@ -1,4 +1,3 @@
- 
 /**
  * Copyright (c) 2015 Denis O <denis@universal-development.com>
  *
@@ -14,3 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/**
+ * Script for converting files from directory into collection of json files
+ */
+
