@@ -18,8 +18,25 @@
  * Script for converting files from directory into collection of json files
  */
 
+@Grab('com.unidev.platform:platform-common:1.2.0')
+@Grab('com.unidev.platform:platform-statistics-simple:1.0.0')
+@GrabExclude('xml-apis:xml-apis')
+
 import groovy.io.FileType
 import groovy.json.*
+
+import com.unidev.platform.statistics.StatisticsManager
+import com.unidev.platform.utils.StringUtils
+
+import org.springframework.context.annotation.ClassPathBeanDefinitionScanner
+import org.springframework.context.support.ClassPathXmlApplicationContext
+import org.springframework.context.support.GenericApplicationContext
+
+
+
+ctx = new ClassPathXmlApplicationContext("classpath:/platform-common-beans.xml");
+
+StatisticsManager statisticsManager = ctx.getBean(StatisticsManager.class);
 
 File inFile = new File(args[0]);
 File outputFile = new File(args[1]);
@@ -28,7 +45,26 @@ println "in: " + inFile
 println "out : " + outputFile
 
 inFile.eachLine {line ->
+    statisticsManager.add("total-lines");
+
+    if (StringUtils.isBlank(line)) {
+        return;
+    }
+
+    try {
+        URI uri = new URI(line);
+        String domainLine =  uri.getScheme() + "://" + uri.getHost();
+
+        outputFile.append(domainLine + "\n");
+
+        statisticsManager.add("ok-link");
+    }catch (Throwable t) {
+        t.printStackTrace();
+        statisticsManager.add("invalid-link");
+    }
 
 }
 
 println "=== Done ==="
+
+println statisticsManager.toString();
