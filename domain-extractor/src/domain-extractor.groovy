@@ -53,7 +53,16 @@ inFile.eachLine {line ->
 
     try {
         URI uri = new URI(line);
-        String domainLine =  uri.getScheme() + "://" + uri.getHost();
+
+        if (StringUtils.isBlank(uri.getScheme())) {
+            return;
+        }
+
+        if (StringUtils.isBlank(uri.getHost())) {
+            return;
+        }
+
+        String domainLine =  uri.getScheme()  + "://" + uri.getHost();
 
         outputFile.append(domainLine + "\n");
 
