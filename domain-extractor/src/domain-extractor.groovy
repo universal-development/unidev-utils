@@ -55,10 +55,12 @@ inFile.eachLine {line ->
         URI uri = new URI(line);
 
         if (StringUtils.isBlank(uri.getScheme())) {
+            statisticsManager.add("invalid-link");
             return;
         }
 
         if (StringUtils.isBlank(uri.getHost())) {
+            statisticsManager.add("invalid-link");
             return;
         }
 
