@@ -15,7 +15,7 @@
  */
 
 /**
- * Script for converting files from directory into collection of json files
+ * Script for extracting schema and domain from link list
  */
 
 @Grab('com.unidev.platform:platform-common:1.2.0')
