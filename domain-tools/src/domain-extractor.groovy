@@ -64,7 +64,7 @@ inFile.eachLine {line ->
             return;
         }
 
-        String domainLine =  uri.getScheme()  + "://" + uri.getHost();
+        String domainLine =  uri.getScheme()  + "://" + uri.getHost();//TODO: reuse way from unique-domains.groovy, extract in one common groovy file/library
 
         outputFile.append(domainLine + "\n");
 
