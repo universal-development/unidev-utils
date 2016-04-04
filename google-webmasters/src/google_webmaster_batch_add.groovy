@@ -1,5 +1,3 @@
-import com.google.api.client.http.HttpTransport
-
 /**
  * Copyright (c) 2015 Denis O <denis@universal-development.com>
  *
@@ -17,7 +15,6 @@ import com.google.api.client.http.HttpTransport
  */
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.http.HttpTransport
 import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.JsonFactory
@@ -53,8 +50,6 @@ Webmasters webmasters = new Webmasters.Builder(httpTransport, jsonFactory, crede
         .build();
 
 SiteVerification verification = new SiteVerification.Builder(httpTransport, jsonFactory, credential).setApplicationName("Verification").build();
-
-
 
 Set<String> domains = new HashSet<>();
 
