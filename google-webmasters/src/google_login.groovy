@@ -15,6 +15,7 @@
  */
 
 /**
+ * 1.0.0
  * Script for logging into google webservices, login will require user action
  */
 
