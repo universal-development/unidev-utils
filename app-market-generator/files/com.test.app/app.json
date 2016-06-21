@@ -1,0 +1,58 @@
+{
+  "package" : "com.unidev.gitcheatsheet",
+  "category" : "Reference",
+  "name" : "Git cheat sheet",
+  "shortDescription" : "Git cheat sheet application",
+  "description" : "Cheat sheet application for helping GIT users !<br/>If you need help we are always available on email: cvs@universal-development.com",
+  "tags" : [
+    "git",
+    "scm",
+    "reference"
+  ],
+
+  "featured" : false,
+
+  "icon" : "http://cdn.android.app.universal-development.com/apps/com.unidev.gitcheatsheet/1.0.0/512.png",
+  "featuredImage" : "http://cdn.android.app.universal-development.com/apps/com.unidev.gitcheatsheet/1.0.0/512.png",
+  "promoImage" : "http://cdn.android.app.universal-development.com/apps/com.unidev.gitcheatsheet/1.0.0/512.png",
+
+  "screenshots" : {
+    "phone" : [
+      "http://cdn.android.app.universal-development.com/apps/com.unidev.app.natoalphabet/1.0.0/device-2016-02-21-104831.png",
+      "http://cdn.android.app.universal-development.com/apps/com.unidev.app.natoalphabet/1.0.0/device-2016-02-21-104831.png"
+    ],
+    "7inc" : [
+
+    ],
+    "10inc" : [
+
+    ]
+  },
+
+  "releases" : [
+    {
+      "version" : "1.0.0",
+      "date" : "2016-06-12",
+      "download" : [
+        "http://cdn.android.app.universal-development.com/apps/com.unidev.gitcheatsheet/1.0.0/git-cheat-sheet-release.apk"
+      ]
+    },
+    {
+      "version" : "0.9.0",
+      "date" : "2016-01-12",
+      "size" : "12mb",
+      "androidVersions" : [ "Android 4.2.4", "Android 5.0.1" ],
+      "download" : [
+        "http://cdn.android.app.universal-development.com/apps/com.unidev.gitcheatsheet/1.0.0/git-cheat-sheet-release.apk"
+      ]
+    }
+  ]
+
+}
+/*
+  "template" : "custom_app.ftl"
+  Image sizes:
+    icon: 512 x 512
+    Feature Graphic ~ 1024 w x 500
+    Promo Graphic ~ 180 w x 120 h
+*/
