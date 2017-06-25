@@ -58,6 +58,7 @@ while(dbCursor.hasNext()) {
     if (allow) {
         stats.add("matches");
         outputFile.append(line + "\n");
+        hosts.add(host);
     } else {
         stats.add("not-matching");
     }
