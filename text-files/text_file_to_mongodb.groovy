@@ -5,6 +5,11 @@ import com.mongodb.MongoClientURI
 import com.unidev.components.statistics.IncrementalStatistics
 import org.apache.commons.lang3.StringUtils
 
+import java.util.concurrent.ConcurrentLinkedDeque
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
+import java.util.concurrent.ThreadFactory
+
 @GrabResolver(name = 'repository', root = 'http://ci.decafdev.local/nexus/content/groups/public')
 @Grab('com.gmongo:gmongo:1.5')
 @Grab(group='org.mongodb', module='mongo-java-driver', version='3.4.2')
@@ -33,6 +38,50 @@ println "Total: $totalLineCount"
 long currentLine = 0;
 IncrementalStatistics stats = new IncrementalStatistics();
 
+Queue<String> linesToProcess = new ConcurrentLinkedDeque<>();
+
+int threadCount = 70;
+Executor executor = Executors.newFixedThreadPool(threadCount);
+
+Runnable processor = new Runnable() {
+    public void run() {
+        while(true) {
+            String line = linesToProcess.poll();
+            if (line == null) {
+                Thread.sleep(100);
+                continue;
+            }
+            int id = line.hashCode();
+            if (collection.findOne(id) != null) {
+                stats.add("existing-line");
+                continue;
+            }
+
+            try {
+                String url = line.split("Result:")[0]
+                URL parsedUrl = new URL(url);
+                String host = parsedUrl.getHost();
+
+                BasicDBObject record = new BasicDBObject();
+                record.put("_id", id);
+                record.put("line", line);
+                record.put("host", host);
+                record.put("file", file.getName());
+
+                collection.save(record)
+
+                stats.add("accepted-lines")
+            } catch (Exception e) {
+                stats.add("error-lines")
+            }
+        }
+    }
+};
+
+for(int t = 0;t<threadCount;t++) {
+    executor.submit(processor);
+}
+
 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile), fileEncoding));
 while(true) {
     String line = bufferedReader.readLine()
@@ -44,6 +93,7 @@ while(true) {
     if (currentLine % 1000 == 0) {
         println "Progress: $currentLine / $totalLineCount"
         println stats.toString()
+        println "Processing queue: " + linesToProcess.size()
     }
 
     if (StringUtils.isBlank(line)) {
@@ -51,28 +101,21 @@ while(true) {
         continue;
     }
 
-    int id = line.hashCode();
-    if (collection.findOne(id) != null) {
-        stats.add("existing-line");
-        continue;
+    linesToProcess.offer(line);
+
+    while (linesToProcess.size() > 1000) {
+        println "*** Queue full***"
+        println "Progress: $currentLine / $totalLineCount"
+        println stats.toString()
+        println "Processing queue: " + linesToProcess.size()
+
+        Thread.sleep(100);
     }
-
-    try {
-        String url = line.split("Result:")[0]
-        URL parsedUrl = new URL(url);
-        String host = parsedUrl.getHost();
-
-        BasicDBObject record = new BasicDBObject();
-        record.put("_id", id);
-        record.put("line", line);
-        record.put("host", host);
-        record.put("file", file.getName());
-
-        collection.save(record)
-
-        stats.add("accepted-lines")
-    }catch (Exception e) {
-        stats.add("error-lines")
-    }
-
 }
+
+println "*** Done loading file***"
+while (linesToProcess.size() > 0) {
+    println("Queue size: " + linesToProcess.size())
+    Thread.sleep(100);
+}
+println "*** Done processing line queue***"
