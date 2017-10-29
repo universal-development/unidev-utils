@@ -46,10 +46,22 @@ log.info("Downloading page...")
 String page = httpClient.get("https://www.worldcoinindex.com/coin/bitcoincash")
 page = stringUtils.cleanPage(page)
 
+
+String market = stringUtils.substringBetween(page, "<table id=\"market-table\"", "</table>")
+
+String coinPrice = StringUtils.substringBetween(market, "<td class=\"coinprice\" style=\"font-size: 18pt; width: 160px;\">", "</td>" )
+String coinPercentage = StringUtils.substringBetween(market, "<td class=\"coin-percentage\" style=\"font-size: 18pt; color: green; padding-right: 10px;\"><span>", "</span>" )
+String coinHigh = StringUtils.substringBetween(market, "<td class=\"coin-high\">", "</span>" )
+String coinLow = StringUtils.substringBetween(market, "<td class=\"col-hide-coin-info coin-low\">", "</span>" )
+
+
+log.info("coinPrice {}", clean(stringUtils, coinPrice))
+log.info("coinPercentage {}", clean(stringUtils, coinPercentage))
+log.info("coinHigh {}", clean(stringUtils, coinHigh))
+log.info("coinLow {}", clean(stringUtils, coinLow))
+
 String markets = stringUtils.substringBetween(page, "<div class=\"coinmarketname\"><span>bitcoincash Markets</span></div>", "</table>")
-
 log.info("{}", markets)
-
 List records = []
 
 while (true) {
@@ -60,22 +72,30 @@ while (true) {
     markets = markets.replace("data-symbol=" + record, "")
     String symbol = stringUtils.substringBetween(record, "\"", "\"")
     String pair = stringUtils.substringBetween(record, "\"mob-pair\">", "</td>")
+    String exchangeName = stringUtils.substringBetween(record, "rel=\"nofollow\">", "</a>")
+    String echangeUrl = stringUtils.substringBetween(record, "href=\"", "\"")
     String price = stringUtils.substringBetween(record, "class=\"number price\" style=\"text-align: right;\">", "</td>")
     String volume = stringUtils.substringBetween(record, "class=\"markets-volume\" style=\"text-align: right;\">", "</td>")
 
-    records.add([ symbol: stringUtils.isBlank(symbol) ? "" : stringUtils.replace(stringUtils.cleanPage(symbol), "\r", ""),
-                  pair: stringUtils.isBlank(pair) ? "" : stringUtils.replace(stringUtils.cleanPage(pair), "\r", ""),
-                  price: stringUtils.isBlank(price) ? "" : stringUtils.replace(stringUtils.cleanPage(price), "\r", ""),
-                  volume: stringUtils.isBlank(volume) ? "" : stringUtils.replace(stringUtils.cleanPage(volume), "\r", "")
+    records.add([ symbol: clean(stringUtils, symbol),
+                  exchange: clean(stringUtils, exchangeName),
+                  exchangeUrl: clean(stringUtils, echangeUrl),
+                  pair: clean(stringUtils, pair),
+                  price: clean(stringUtils, price),
+                  volume: clean(stringUtils, volume),
             ])
 }
 
 records.each({
     log.info("===")
     log.info("symbol: {}", it.symbol)
+    log.info("exchange: {}", it.exchange)
+    log.info("exchangeUrl: {}", it.exchangeUrl)
     log.info("pair: {}", it.pair)
     log.info("price: {}", it.price)
     log.info("24h volume: {}", it.volume)
 })
 
-
+def clean(stringUtils, str) {
+    return stringUtils.isBlank(str) ? "" : stringUtils.replace(stringUtils.cleanPage(str), "\r", "")
+}
