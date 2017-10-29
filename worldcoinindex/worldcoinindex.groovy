@@ -2,6 +2,7 @@ import com.unidev.platform.common.utils.StringUtils
 import com.unidev.platform.components.http.HTTPClient
 import com.unidev.platform.components.http.HTTPClientUtils
 import com.unidev.platform.components.http.XTrustProvider
+import org.jsoup.Jsoup
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.support.ClassPathXmlApplicationContext
@@ -30,6 +31,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext
 @GrabResolver(name = 'decaf', root = 'http://ci.decafdev.local/nexus/content/groups/public')
 @Grab('com.unidev.platform.spring:simple-config:2.0.0-SNAPSHOT')
 @Grab('com.unidev.platform.components:http-client:2.0.0-SNAPSHOT')
+@Grab('org.jsoup:jsoup:1.10.3')
 
 def ctx = new ClassPathXmlApplicationContext("classpath:/unidev-simple.xml");
 
@@ -61,7 +63,6 @@ log.info("coinHigh {}", clean(stringUtils, coinHigh))
 log.info("coinLow {}", clean(stringUtils, coinLow))
 
 String markets = stringUtils.substringBetween(page, "<div class=\"coinmarketname\"><span>bitcoincash Markets</span></div>", "</table>")
-log.info("{}", markets)
 List records = []
 
 while (true) {
@@ -97,5 +98,9 @@ records.each({
 })
 
 def clean(stringUtils, str) {
-    return stringUtils.isBlank(str) ? "" : stringUtils.replace(stringUtils.cleanPage(str), "\r", "")
+    if (stringUtils.isBlank(str)) {
+        return "";
+    }
+    String parsedText = Jsoup.parse(str).text();
+    return stringUtils.replace(stringUtils.cleanPage(parsedText), "\r", "")
 }
