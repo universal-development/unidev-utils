@@ -39,12 +39,32 @@ Logger log = LoggerFactory.getLogger("")
 StringUtils stringUtils = ctx.getBean(StringUtils.class)
 XTrustProvider.install()
 
-HTTPClient httpClient = ctx.getBean(HTTPClient.class);
+HTTPClient httpClient = ctx.getBean(HTTPClient.class)
 httpClient.init(HTTPClientUtils.USER_AGENTS)
-
 
 log.info("Downloading page...")
 
 String page = httpClient.get("https://www.worldcoinindex.com/coin/bitcoincash")
+page = stringUtils.cleanPage(page)
 
-log.info("{}", page)
+String markets = stringUtils.substringBetween(page, "<div class=\"coinmarketname\"><span>bitcoincash Markets</span></div>", "</table>")
+
+log.info("{}", markets)
+
+List records = []
+
+while(true) {
+    String record = stringUtils.substringBetween(markets, "data-symbol=", "</tr>")
+    if (stringUtils.isBlank(record)) {
+        break;
+    }
+    markets = markets.replace("data-symbol=" + record, "")
+    String symbol = stringUtils.substringBetween(record, "\"", "\"")
+    String pair = stringUtils.substringBetween(record, "\"mob-pair\">", "</td>")
+    String price = stringUtils.substringBetween(record, "class=\"number price\" style=\"text-align: right;\">", "</td>")
+    String volume = stringUtils.substringBetween(record, "class=\"markets-volume\" style=\"text-align: right;\">", "</td>")
+
+    records.add([ symbol: stringUtils.cleanPage(symbol), pair:stringUtils.cleanPage(pair), price:stringUtils.cleanPage(price), volume:stringUtils.cleanPage(volume) ])
+}
+
+log.info("Parsed records {}", records)
