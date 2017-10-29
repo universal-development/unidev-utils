@@ -1,4 +1,3 @@
-import com.unidev.platform.common.utils.RandomUtils
 import com.unidev.platform.common.utils.StringUtils
 import com.unidev.platform.components.http.HTTPClient
 import com.unidev.platform.components.http.HTTPClientUtils
@@ -53,7 +52,7 @@ log.info("{}", markets)
 
 List records = []
 
-while(true) {
+while (true) {
     String record = stringUtils.substringBetween(markets, "data-symbol=", "</tr>")
     if (stringUtils.isBlank(record)) {
         break;
@@ -64,7 +63,19 @@ while(true) {
     String price = stringUtils.substringBetween(record, "class=\"number price\" style=\"text-align: right;\">", "</td>")
     String volume = stringUtils.substringBetween(record, "class=\"markets-volume\" style=\"text-align: right;\">", "</td>")
 
-    records.add([ symbol: stringUtils.cleanPage(symbol), pair:stringUtils.cleanPage(pair), price:stringUtils.cleanPage(price), volume:stringUtils.cleanPage(volume) ])
+    records.add([ symbol: stringUtils.isBlank(symbol) ? "" : stringUtils.replace(stringUtils.cleanPage(symbol), "\r", ""),
+                  pair: stringUtils.isBlank(pair) ? "" : stringUtils.replace(stringUtils.cleanPage(pair), "\r", ""),
+                  price: stringUtils.isBlank(price) ? "" : stringUtils.replace(stringUtils.cleanPage(price), "\r", ""),
+                  volume: stringUtils.isBlank(volume) ? "" : stringUtils.replace(stringUtils.cleanPage(volume), "\r", "")
+            ])
 }
 
-log.info("Parsed records {}", records)
+records.each({
+    log.info("===")
+    log.info("symbol: {}", it.symbol)
+    log.info("pair: {}", it.pair)
+    log.info("price: {}", it.price)
+    log.info("24h volume: {}", it.volume)
+})
+
+
