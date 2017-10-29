@@ -3,6 +3,8 @@ import com.unidev.platform.common.utils.StringUtils
 import com.unidev.platform.components.http.HTTPClient
 import com.unidev.platform.components.http.HTTPClientUtils
 import com.unidev.platform.components.http.XTrustProvider
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.context.support.ClassPathXmlApplicationContext
 
 /**
@@ -32,12 +34,17 @@ import org.springframework.context.support.ClassPathXmlApplicationContext
 
 def ctx = new ClassPathXmlApplicationContext("classpath:/unidev-simple.xml");
 
+Logger log = LoggerFactory.getLogger("")
+
 StringUtils stringUtils = ctx.getBean(StringUtils.class)
-
-println ctx
-
 XTrustProvider.install()
 
 HTTPClient httpClient = ctx.getBean(HTTPClient.class);
 httpClient.init(HTTPClientUtils.USER_AGENTS)
-println httpClient
+
+
+log.info("Downloading page...")
+
+String page = httpClient.get("https://www.worldcoinindex.com/coin/bitcoincash")
+
+log.info("{}", page)
