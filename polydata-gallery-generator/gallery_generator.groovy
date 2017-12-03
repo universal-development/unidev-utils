@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 Denis O <denis@universal-development.com>
+ * Copyright (c) 2017 Denis O <denis.o@linux.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,7 +110,7 @@ for(File file : folders) {
 new FlatFileStorageMapper().saveSource(new File("$output/index.json")).save(index)
 
 def cleanFile(file) {
-    def dictionary = "0987654321ABCDEFGHIKLMNabcdefghiklmnIJDHKWMXXWFCF"
+    def dictionary = "1234567890abcdefgh"
     def random = new java.security.SecureRandom(file.getBytes())
     int count = random.nextInt(5) + 3
     def name = "";
@@ -123,12 +123,6 @@ def cleanFile(file) {
 def exec(command) {
     def proc = command.execute()
     proc.waitFor()
-
-    // Obtain status and output
-    println "return code: ${ proc.exitValue()}"
-    println "stderr: ${proc.err.text}"
-    println "stdout: ${proc.in.text}"
-
 }
 
 
