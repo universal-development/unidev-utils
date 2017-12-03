@@ -19,6 +19,7 @@
 /**
  * Script to produce gallery files from folder "input" to "output".
  * Produced collection contain scalled thumbnail images in separated folders.
+ * Required programs: ImageMagic convert
  */
 
 import com.unidev.polydata.FlatFileStorage
