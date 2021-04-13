@@ -6,8 +6,11 @@
 package main
 
 import (
+	"bufio"
+	"fmt"
 	"log"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -20,4 +23,48 @@ func main() {
 		log.Fatal("Missing output variable")
 	}
 
+	f, err := os.Open(inputFile)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer f.Close()
+
+	log.Print("Loading file lines")
+	totalLines := 0
+	blankLines := 0
+
+	uniqueLines := make(map[string]bool)
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		totalLines++
+		line := scanner.Text()
+		line = strings.ReplaceAll(line, " ", "")
+		if len(line) == 0 {
+			blankLines++
+			continue
+		}
+		uniqueLines[line] = true
+	}
+
+	log.Printf("Total lines : %+v", totalLines)
+	log.Printf("Blank lines : %+v", blankLines)
+	log.Printf("Saving results in %+v", outputFile)
+
+	output, err := os.Create(outputFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer output.Close()
+
+	writer := bufio.NewWriter(output)
+	for k := range uniqueLines {
+		writer.WriteString(fmt.Sprintf("%s\n", k))
+	}
+	flush_err := writer.Flush()
+	if flush_err != nil {
+		log.Fatal(flush_err)
+	}
 }
